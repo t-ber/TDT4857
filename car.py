@@ -3,8 +3,9 @@ import random
 
 class Car:
 
-    def __init__(self, x, y):#, lane): # Road som f.eks. klasse
+    def __init__(self, x, y , lane):#, lane): # Road som f.eks. klasse
         self.go = True
+        self.lane = lane
         self.x = x
         self.y = y
         #self.current_lane = lane
@@ -39,6 +40,11 @@ class Car:
             self.x += 1
         elif self.traveling_direction == "west":
             self.x -= 1
+
+    def move_car_to_new_lane(self, new_lane):
+        self.lane.remove(self)
+        self.lane = new_lane
+        self.lane.append(self)
 
     def get_direction(self):
         return self.traveling_direction

@@ -1,0 +1,51 @@
+Åssen gjøres det når en bil skal fra en fil til en annen?
+
+Gitt at den er ved et lyskryss, og det er grønt, vil den flytte seg fra filen den er i til en ny fil i retningen den har lyst til
+
+Bilen sjekker med veien (road) den skal på om det er en ledig fil
+
+Hvis det er det ber bilen veien om å bli plassert i en av filene dens
+
+Det skjer ved at:
+- Bilen fjernes fra bil-listen den var i (listen til filen den var i)
+- Bilen legges til i den nye filens liste på korrekt posisjon (hvor filen er blitt 'tildelt' av veien)
+- Bilen oppdaterer posisjonen sin og sin nye ønskede retning basert på sannsynligheter definert i fil (lane) klassen (f.eks 70 % rett frem, 30 % til høyre)
+
+
+Veien (road) trenger:
+ * En liste over filer (lanes)
+ * Sannsynligheter for at nye biler havner i de forskjellige filene
+ * En variabel som sier om den kan spawne biler eller ikke
+ * Evt spawn raten til bilene, sannsynlighetene for de forskjellige filene blir det samme som punkt 2
+ * Retning?
+
+Filen (lane) trenger:
+ * Retning??????
+ * Start- og slutt posisjon
+ * En liste over biler som er i den, der indeksen er basert på den fysiske posisjonen dens
+ * Datastruktur for mulige retninger ut av filen
+ * Sannsynligheter for retnginger ut av filen
+ * Et (evt flere etterhvert) lyssignaler
+ * En vei assosiert med de mulige retningene
+
+Bilen (car) trenger:
+ * Filen den kjører i
+ * X, Y posisjon
+ * Retning nå
+ * Retning den skal i ved krysset
+ * En funksjon som sier om den skal stoppe eller kjøre
+  - Hvis den har stoppet ved lyskrysset skal 'spørrerunden' starte
+  - Den starter å kjøre uansett hvis den er fremst i filen
+  - Hvis ikke begynner den å kjøre hvis den har god plass til bilen foran (typ en posisjon mellomrom)
+
+Viktig spørsmål : I hvilken rekkefølge skal vi oppdatere bilenes oppførsel?
+ - Road for road og så lane for lane?
+ - Har vi en overordnet liste over alle bilene (kan evt være nyttig for å måle trafikkflyt også)
+
+
+Trafikklysstyrer (Intersection Manager / IM) trenger
+ * En liste over trafikklysene den styrer
+ * En måte å styre dem på
+
+Lyssignalene (lights)
+ 

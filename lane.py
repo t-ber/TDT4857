@@ -2,16 +2,22 @@ from lights import Traffic_light
 import numpy as np
 
 class Lane:
-    def __init__(self, x_min, x_max, y_min, y_max, direction):
+    def __init__(self, x_min, x_max, y_min, y_max, start_pos, direction):
         self.x_min = x_min
         self.x_max = x_max
         self.y_min = y_min
         self.y_max = y_max
+        self.start_pos = start_pos
         self.traffic_lights = []
         self.cars = []
         self.direction = direction
         pass
-    
+
+    def is_occupied(self) -> bool:
+        if len(self.cars) != 0:
+            return self.cars[0].get_position() == self.start_pos # Sjekker om bilen bakerst i filen ligger bakerst i filen 
+        else:
+            return False # Filen er ledig hvis det ikke er noen biler på den
     
 
     def add_traffic_light(self, traffic_light): # Noe kode er blitt fjernet og lagt til her, er ikke som den var
