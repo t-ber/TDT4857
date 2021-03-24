@@ -44,7 +44,8 @@ class Traffic_light:
         self.current_state = 'red'
         Traffic_light.id += 1
 
-
+    def is_green(self):
+        pass
 
     def flip_trafic_light_state(self):
         if self.current_state == 'red':

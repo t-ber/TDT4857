@@ -3,7 +3,7 @@ import random
 
 class Car:
 
-    def __init__(self, x, y , lane):#, lane): # Road som f.eks. klasse
+    def __init__(self, x, y, lane):#, lane): # Road som f.eks. klasse
         self.go = True
         self.lane = lane
         self.x = x
@@ -21,15 +21,22 @@ class Car:
         # , og roof/floor denne
         # Da vil man få en random spawn på ulike plasser
 
-    def _car_ahead(self) -> bool:
-        pass
 
-    def _at_intersection(self) -> bool:
-        pass
-
-
-    # def _should_stop(self) -> bool:
-    #     if self._car_ahead() or 
+    def _should_stop(self) -> bool:
+        if self.lane.is_first_car(self): # Hvis først, stopp kun hvis du er ved lyskrysset og det er rødt
+            if self.lane.is_end_pos(self.x ,self.y):
+                if self.lane.is_signal_green(self.traveling_direction):
+                    return False
+                else:
+                    return True
+            else:
+                return False
+        else: # Hvis man ikke er den første bilen i filen, stopp kun hvis det er kort til bilen foran
+            if self.lane.get_distance_to_next_car(self) < 2:
+                return True
+            else:
+                return False
+        
 
     def update_position(self):
         if self.traveling_direction == "north":
@@ -42,9 +49,25 @@ class Car:
             self.x -= 1
 
     def move_car_to_new_lane(self, new_lane):
-        self.lane.remove(self)
+        self.lane.remove_car(self)
+        self.new_lane.add_car(self)
         self.lane = new_lane
-        self.lane.append(self)
+
+    def choose_new_lane(self):
+        direction_chances = self.lane.exit_dirs_probs
+        south = direction_chances["south"]
+        north = direction_chances["north"]
+        west = direction_chances["west"]
+        east = direction_chances["east"]
+
+        directions = ["south"]*south + ["north"]*north + ["west"]*west + ["east"]*east
+        self.next_direction = random.choice(directions)
+
+        new_road = self.lane.connected_roads[self.next_direction]
+        new_lane = new_road.assign_lane()
+        self.move_car_to_new_lane(new_lane)
+        self.set_traveling_direction(self.next_direction)
+
 
     def get_direction(self):
         return self.traveling_direction

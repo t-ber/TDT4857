@@ -13,6 +13,7 @@ Det skjer ved at:
 
 
 Veien (road) trenger:
+ * Retning
  * En liste over filer (lanes)
  * Sannsynligheter for at nye biler havner i de forskjellige filene
  * En variabel som sier om den kan spawne biler eller ikke
@@ -20,13 +21,12 @@ Veien (road) trenger:
  * Retning?
 
 Filen (lane) trenger:
- * Retning??????
+ * Retning?????? (Tror lur løsning på dette er at en lane kun går en retning, så for to-fils vei så har man to lanes som går hver sin retning)
  * Start- og slutt posisjon
  * En liste over biler som er i den, der indeksen er basert på den fysiske posisjonen dens
- * Datastruktur for mulige retninger ut av filen
- * Sannsynligheter for retnginger ut av filen
+ * Datastruktur for mulige retninger ut av filen (<-- mulig med SET av veier (roads) som lanen kan gå over i)
+ * Sannsynligheter for retninger ut av filen (basert på retningene i mulige sluttveier)
  * Et (evt flere etterhvert) lyssignaler
- * En vei assosiert med de mulige retningene
 
 Bilen (car) trenger:
  * Filen den kjører i
@@ -34,7 +34,7 @@ Bilen (car) trenger:
  * Retning nå
  * Retning den skal i ved krysset
  * En funksjon som sier om den skal stoppe eller kjøre
-  - Hvis den har stoppet ved lyskrysset skal 'spørrerunden' starte
+  - Hvis den har stoppet ved lyskrysset skal 'spørrerunden' starte (spørre relevant vei om det er en fil den kan legge seg i)
   - Den starter å kjøre uansett hvis den er fremst i filen
   - Hvis ikke begynner den å kjøre hvis den har god plass til bilen foran (typ en posisjon mellomrom)
 
@@ -46,6 +46,9 @@ Viktig spørsmål : I hvilken rekkefølge skal vi oppdatere bilenes oppførsel?
 Trafikklysstyrer (Intersection Manager / IM) trenger
  * En liste over trafikklysene den styrer
  * En måte å styre dem på
+ #* liste over eller funksjon for å hente intersecting roads for da å kunne si at disse ikke skal kunne ha grønt lys samtidig(?)
+ #* Kan da lage sett med lyskryss som oppdaterer seg, i stedet for at man gjør mye en hel haug med kontroller for å sjekke man ikke får kollisjoner
+ #* Hver lane har et designert lyskryss, med sett med non-intersectioning lanes kan man da for hvert sett oppdatere lys
 
 Lyssignalene (lights)
  

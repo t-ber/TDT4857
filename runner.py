@@ -12,10 +12,11 @@ from matplotlib.pylab import *
 import matplotlib.cm as cm
 from car import Car
 from road import Road
+from lane import Lane
 
 
-width = 50
-height = 50
+width = 100
+height = 100
 
 free = 0 # maurdrit
 carrying = 1 # maurdrit
@@ -36,7 +37,8 @@ lightYpos = [10, 40, 10, 40] # y-position of light 1, 2, 3, 4
 
 def initialize_2():
     global time, lightAgents, envir, cars
-
+    
+    
     time = 0
     road_1 = Road(0, 10, 10)
     car_1 = Car(0, 0)
@@ -47,7 +49,7 @@ def initialize():
     global time, lightAgents, envir, cars
 
     time = 0
-
+    
     cars = [] # list of cars
     car = Car(10, 0) # create car object
     cars.append(car) # Spawn new car
@@ -56,7 +58,7 @@ def initialize():
     for i in range(len(lightXpos)):
         new_light = Traffic_light(lightXpos[i], lightYpos[i]) #[lightXpos[i], lightYpos[i], red] # create light
         lightAgents.append(new_light) # spawn light
-
+    
     # Kode som tegner veiene svart
     envir = zeros([height, width])
     envir[10,:] = 1
@@ -64,6 +66,111 @@ def initialize():
     envir[40,:] = 1
     envir[:,40] = 1
     
+    
+def initialize_elgeseter():
+    global time, envir, lightAgents, cars, roads
+    cars = []
+    lightAgents = []
+    # Kode som tegner veiene svart
+    envir = zeros([height, width])
+
+
+    rngs_lane_1 = Lane(20, 20, 0, 20, "south",envir)
+    rngs_lane_2 = Lane(40, 40, 0, 20, "south",envir)
+    rngs = [rngs_lane_1, rngs_lane_2]
+    road_north_going_south  = Road("south", rngs, [], True)
+    
+    rmgs_lane_1 = Lane(20, 20, 20, 40, "south",envir)
+    rmgs_lane_2 = Lane(40, 40, 20, 40, "south",envir)
+    rmgs = [rmgs_lane_1, rmgs_lane_2]
+    road_middle_going_south = Road("south", rmgs, [], False)
+
+    rngs_lane_1.connected_roads(road_middle_going_south)
+    rngs_lane_2.connected_roads(road_middle_going_south)
+
+    rsmgs_lane_1 = Lane(20, 20, 40, 60, "south",envir)
+    rsmgs_lane_2 = Lane(40, 40, 40, 60, "south",envir)
+    rsmgs = [rsmgs_lane_1, rsmgs_lane_2]
+    road_south_middle_going_south = Road("south", rsmgs, [], False)
+
+    rmgs_lane_1.connected_roads(road_south_middle_going_south)
+    rmgs_lane_2.connected_roads(road_south_middle_going_south)
+    
+    rsgs_lane_1 = Lane(20, 20, 60, 100, "south",envir)
+    rsgs_lane_2 = Lane(40, 40, 60, 100, "south",envir)
+    rsgs = [rsgs_lane_1, rsgs_lane_2]
+    road_south_going_south = Road("south", rsgs, [], False, True)
+
+    rsmgs_lane_1.connected_roads(road_south_going_south)
+    rsmgs_lane_2.connected_roads(road_south_going_south)
+
+    traffic_light_rngs_s_1_2 = Traffic_light(30, 20)
+    traffic_light_rngs_e_2 = Traffic_light(40, 20)
+    traffic_light_rmgs_s_1_2 = Traffic_light(30, 50)
+    
+    lightAgents.append(traffic_light_rngs_s_1_2)
+    lightAgents.append(traffic_light_rngs_e_2)
+    lightAgents.append(traffic_light_rmgs_s_1_2)
+
+    rsgn_lane_1 = Lane(60, 60, 100, 80, "north",envir)
+    rsgn_lane_2 = Lane(80, 80, 100, 80, "north",envir)
+    rsgn = [rsgn_lane_1, rsgn_lane_2]
+    road_south_going_north = Road("north", rsgn, [], True)
+
+    traffic_light_rsgn_1_2 = Traffic_light(70, 80)
+    lightAgents.append(traffic_light_rsgn_1_2)
+
+    rmgn_lane_1 = Lane(60, 60, 80, 60, "north",envir)
+    rmgn_lane_2 = Lane(80, 80, 80, 60, "north",envir)
+    rmgn = [rmgn_lane_1, rmgn_lane_2]
+    road_middle_going_north = Road("north", rmgn, [], False)
+    rsgn_lane_1.connected_roads(road_middle_going_north)
+    rsgn_lane_2.connected_roads(road_middle_going_north)
+
+    rsge_lane = Lane(80, 100, 60, 60, "east",envir)
+    road_south_going_east = Road("east", [rsge_lane], [], False, True)
+    rmgn_lane_2.connected_roads(road_south_going_east)
+
+    rmege_lane = Lane(40, 80, 40, 40, "east",envir)
+    road_middle_east_going_east = Road("east", [rmege_lane])
+    rmgs_lane_2.connected_roads(road_middle_east_going_east)
+
+    rnege_lane = Lane(80, 100, 40, 40, "east",envir)
+    road_north_east_going_east = Road("east", [rnege_lane], [], False, True)
+    rmege_lane.connected_roads(road_north_east_going_east)
+
+    rsegw_lane = Lane(100, 30, 50, 50, "west",envir)
+    road_south_east_going_west = Road("west", [rsegw_lane], is_spawner=True)
+    traffic_light_rsegw = Traffic_light(80, 50)
+    lightAgents.append(traffic_light_rsegw)
+    rsegw_lane.connected_roads(road_south_going_south)
+
+    rmngn_lane_1 = Lane(60, 60, 60, 40, "north",envir)
+    rmngn_lane_2 = Lane(80, 80, 60, 40, "north",envir)
+    rmngn = [rmngn_lane_1, rmngn_lane_2]
+    road_middle_north_going_north = Road("north", rmngn, [], False, False)
+    rmgn_lane_1.connected_roads(road_middle_north_going_north)
+
+    rmnngn_lane_1 = Lane(70, 70, 40, 30, "north", envir)
+    road_middle_north_north_going_north = Road("north", [rmnngn_lane_1])
+    rmngn_lane_1.connected_roads(road_middle_north_north_going_north)
+    rmngn_lane_2.connected_roads(road_middle_north_north_going_north)
+
+    rnegw_lane = Lane(100, 70, 30, 30, "west", envir)
+    road_north_east_going_west = Road("west", [rnegw_lane], is_spawner=True)
+
+    rngn_lane = Lane(70, 70, 30, 0, "north",envir)
+    road_north_going_north = Road("north", [rngn_lane], is_despawner=True)
+    rmnngn_lane_1.connected_roads(road_north_going_north)
+    rnegw_lane.connected_roads(road_north_going_north)
+
+    traffic_light_rmngn_1_2 = Traffic_light(70, 30)
+    lightAgents.append(traffic_light_rmngn_1_2)
+
+
+
+
+
 
 def observe():
     cla() # kanskje clearer drit
@@ -101,75 +208,16 @@ def get_distance_between_cars(car_1, car_2):
     return distance
 
 def update():
-    global time, cars, envir
+    global time, cars, roads, envir
 
+    # Gitt av vi har en list over alle veiene
+    for road in roads:
+        road.trim_lane_ends()
+        new_car = road.spawn_car_cond()
+        if new_car != False: # Hvis bil faktisk ble spawnet
+            cars.append(new_car)
+    
     time += 1
-
-    for i, light in enumerate(lightAgents):
-        if (time+10*i)%50 == 0:
-            if light.current_state == "red":
-                light.current_state = "green"
-            else:
-                light.current_state = "red"
-    '''
-    if (time+3)%50 == 0: # for hvert 25. "sekund", flipper lysene for lys 0, med shiftet start
-        if lightAgents[0].current_state == "red":
-            lightAgents[0].current_state = "green"
-        else:
-            lightAgents[0].current_state = "red"
-            
-    if (time+20)%50 == 0: # for hvert 25. "sekund", flipper lysene for lys 1, med shiftet start
-        if lightAgents[1].current_state == "red":
-            lightAgents[1].current_state = "green"
-        else:
-            lightAgents[1].current_state = "red"
-    '''
-    # Hvis liste av biler ikke har biler, eller siste bilen ikke befinner seg på startsted spawn biler
-    if len(cars)==0 or (cars[-1].y != rd1Ypos[0]
-                           and random() < carSpawnProb):
-        car = Car(rd1Xpos[0], rd1Ypos[0]) 
-        cars.append(car) # Spawn new car
-    
-    for car in cars:
-        car_pos = (car.x, car.y)
-        out_of_bounds = [(0, 10), (10, -1), (10, 50), (0, 40), (40, 0), (50, 10), (50, 40), (40, 50)]
-        if car_pos in out_of_bounds: #cars[0].y == rd1Ypos[1] or cars[0].x == rd1Xpos[1]: # Despawn out of bounds car
-            cars.remove(car)
-      
-    cars[0].go = True    # Sets car to go
-
-    # Controls cars not to collide from behind    
-    # Controls cars not to collide from behind    
-    for i in range(len(cars)):
-        #radiusL1 = math.sqrt((cars[i].y - lightAgents[0].y)**2 + (cars[i].x - lightAgents[0].x)**2) Problem med dette,
-        # på vei ut fra lyskryss stopper biler om det blir rødt på vei inn i kryss
-        if check_if_red_light(cars[i]):
-            cars[i].go = False
-        
-        else:
-            if i > 0:
-                dist = get_distance_between_cars(cars[i], cars[i-1]) #funker ikke, neste bil i listen er ikke nødvendigvis i samme lane
-                if dist >= 2:
-                    cars[i].go = True
-                else:
-                    cars[i].go = False
-            else:
-                cars[i].go = True
-        """ if i > 0:
-                if (cars[i-1].y - cars[i].y) < 2 and cars[i].traveling_direction == cars[i-1].traveling_direction:
-                    cars[i].go = False"""
-        # setter ikke her at bil 0 kan kjøre.
-            #håper det skjer ved grønt lys
-    
-    """for i, car in enumerate(cars): #lightYpos burde endres til objektet trafficlight og dets  pos
-        if ((car.y == lightYpos[0]-1 and lightAgents[0].current_state == "red") 
-        or (car.y == lightYpos[1]-1 and lightAgents[1].current_state == "red")):
-            car.go = False # Stop before red lights
-            
-        else:
-            if i < len(cars)-1:
-                if (cars[i].y - cars[i+1].y) >= 2:
-                    car.go = True    """
     
     
     
@@ -212,7 +260,7 @@ def update():
         if car.go:
             car.update_position()
 
-pycxsimulator.GUI().start(func=[initialize, observe, update])
+pycxsimulator.GUI().start(func=[initialize_elgeseter, observe, update])
 
 #PROBLEM I KODEN!:
 '''
