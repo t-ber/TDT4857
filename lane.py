@@ -12,6 +12,8 @@ class Lane:
         self.connected_roads = {} # Også som dict. connected_roads[exit_direction] = road object   
         self.direction = direction
         self.draw_self(envir)
+        self.exit_dirs = {}
+        self.exit_dirs_probs = {}
         pass
 
     def is_occupied(self) -> bool:
@@ -22,7 +24,7 @@ class Lane:
 
     def is_end_occupied(self) -> bool:
         if len(self.cars) != 0:
-            return self.cars[-1].get_position() == (self.x_end, self.y_end) # Sjekker om bilen bakerst i filen ligger bakerst i filen 
+            return self.cars[-1].get_position() == (self.x_end, self.y_end) # Sjekker om bilen forrerst i filen ligger forrerst i filen 
         else:
             return False # Filen er ledig hvis det ikke er noen biler på den
 
@@ -34,16 +36,23 @@ class Lane:
 
     def add_car(self, car): # Legger til bilen i starten av listen
         self.cars.insert(0, car)
+        car.x = self.x_start
+        car.y = self.y_start
+        car.traveling_direction = self.direction
+        car.set_next_direction()
 
     def remove_car(self, car):
         self.cars.remove(car)
 
-    def delete_last_car(self):
-        del self.car[-1]
+    def pop_last_car(self):
+        print('Despawned car')
+        return self.cars.pop(-1)
 
     def trim_end_pos(self):
         if self.is_end_occupied():
-            self.delete_last_car()
+            return self.pop_last_car()
+        else:
+            return False
 
     def is_first_car(self, asking_car):
         if self.cars.index(asking_car) == len(self.cars)-1:
@@ -84,13 +93,13 @@ class Lane:
     
     def draw_self(self, envir):
         if self.direction == "north":
-            envir[self.y_end:self.y_start, self.x_end] = 1
+            envir[self.y_end:self.y_start+1, self.x_end] = 1
         elif self.direction == "south":
-            envir[self.y_start:self.y_end, self.x_end] = 1
+            envir[self.y_start:self.y_end+1, self.x_end] = 1
         elif self.direction == "east":
-            envir[self.y_end, self.x_start:self.x_end] = 1
+            envir[self.y_end, self.x_start:self.x_end+1] = 1
         elif self.direction == "west":
-            envir[self.y_end, self.x_end:self.x_start] = 1
+            envir[self.y_end, self.x_end:self.x_start+1] = 1
     
             
 

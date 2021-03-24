@@ -1,5 +1,4 @@
-import sys, pygame
-import pygame.gfxdraw
+
 import ctypes
 import os
 

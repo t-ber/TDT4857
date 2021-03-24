@@ -1,5 +1,4 @@
 import random
-from pygame import gfxdraw
 from lights import Traffic_light
 import math
 
@@ -26,12 +25,15 @@ class Road:
         for idx, lane in enumerate(self.lanes):
             if lane.is_occupied():
                 lane_prob_adj[idx] = 0
-        return random.choices(self.lanes, weights=lane_prob_adj) # Returnerer fil-objektet som er blitt tildelt
+        return random.choices(self.lanes, weights=lane_prob_adj)[0] # Returnerer fil-objektet som er blitt tildelt
     
     def trim_lane_ends(self): # Fjerner alle biler som er ved slutten av veien hvis veien er en despawner
+        popped_cars_list = []
         if self.is_despawner:
             for lane in self.lanes:
-                lane.trim_end_pos()
+                if lane.is_end_occupied():
+                    popped_cars_list.append(lane.pop_last_car())
+        return popped_cars_list
 
     def spawn_car(self): # Spawner en bil i assigned lane hvis veien ikke er full
         if self.is_spawner:

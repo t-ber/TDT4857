@@ -25,17 +25,23 @@ class Car:
     def _should_stop(self) -> bool:
         if self.lane.is_first_car(self): # Hvis først, stopp kun hvis du er ved lyskrysset og det er rødt
             if self.lane.is_end_pos(self.x ,self.y):
-                if self.lane.is_signal_green(self.traveling_direction):
-                    return False
+                if self.lane.is_signal_green(self.next_direction):
+                    if self.lane.connected_roads[self.next_direction].is_occupied(): 
+                        return True # Hvis den kan kjøre i lyskrysset men det er fullt i veien den skal i
+                    else:
+                        return False # Hvis den kan kjøre i lyskrysset og det er ledig der den skal
                 else:
-                    return True
+                    return True # Hvis den er ved enden og det er rødt lys
             else:
-                return False
+                return False # Hvis den er den først bilen og den ikke er ved enden
         else: # Hvis man ikke er den første bilen i filen, stopp kun hvis det er kort til bilen foran
-            if self.lane.get_distance_to_next_car(self) < 2:
-                return True
+            if self.go:
+                if self.lane.get_distance_to_next_car(self) < 2:
+                    return True # Beveger på seg og bilen foran er rett foran
             else:
-                return False
+                if self.lane.get_distance_to_next_car(self) < 3:
+                    return True # Står stille og bilen foran er nærme
+            return False # god avstand til bilen foran
         
 
     def update_position(self):
@@ -50,23 +56,21 @@ class Car:
 
     def move_car_to_new_lane(self, new_lane):
         self.lane.remove_car(self)
-        self.new_lane.add_car(self)
         self.lane = new_lane
+        self.lane.add_car(self)
+    
+    def set_next_direction(self):
+        if not bool(self.lane.exit_dirs):
+            return 'south'
+        direction_chances = self.lane.exit_dirs_probs
+        chances = list(direction_chances.values())
+        self.next_direction = random.choices(list(direction_chances.keys()), weights=chances, k=1)[0] # Returnerer i utgangspunktet en liste selv om det bare er ett objekt
 
     def choose_new_lane(self):
-        direction_chances = self.lane.exit_dirs_probs
-        south = direction_chances["south"]
-        north = direction_chances["north"]
-        west = direction_chances["west"]
-        east = direction_chances["east"]
-
-        directions = ["south"]*south + ["north"]*north + ["west"]*west + ["east"]*east
-        self.next_direction = random.choice(directions)
-
         new_road = self.lane.connected_roads[self.next_direction]
         new_lane = new_road.assign_lane()
         self.move_car_to_new_lane(new_lane)
-        self.set_traveling_direction(self.next_direction)
+        self.set_direction(self.next_direction)
 
 
     def get_direction(self):
@@ -91,3 +95,16 @@ class Car:
         possible_directions = self.directions.copy()
         possible_directions.remove(self.came_from)
         self.traveling_direction = possible_directions[random.randint(0,2)]
+
+    def update(self):
+        if self._should_stop():
+            self.go = False
+            return
+        else:
+            self.go = True
+        
+        if self.lane.is_end_pos(self.x, self.y):
+            self.choose_new_lane()
+            return
+        self.update_position()
+        
