@@ -45,7 +45,6 @@ class Lane:
         self.cars.remove(car)
 
     def pop_last_car(self):
-        print('Despawned car')
         return self.cars.pop(-1)
 
     def trim_end_pos(self):

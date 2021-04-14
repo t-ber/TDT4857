@@ -6,7 +6,7 @@ from car import Car
 from lane import Lane
 
 class Road:
-    def __init__(self, direction, lanes=[], laneprobs=[], is_spawner=False, is_despawner=False, avg_traffic = 10):
+    def __init__(self, direction, lanes=[], laneprobs=[], is_spawner=False, is_despawner=False, avg_traffic = 1200):
         self.lanes = lanes
         self.laneprobs = laneprobs
         self.is_spawner = is_spawner
@@ -46,6 +46,10 @@ class Road:
 
     def spawn_car_cond(self):
         should_spawn_car = True
+        if self.avg_traffic/3600 > random.random():
+            should_spawn_car = True
+        else:
+            should_spawn_car = False
         return_val = False
         if should_spawn_car:
             return_val = self.spawn_car()

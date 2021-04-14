@@ -13,7 +13,7 @@ import matplotlib.cm as cm
 from car import Car
 from road import Road
 from lane import Lane
-from intersection_manager import IM
+from intersection_manager import IM, IM2
 
 
 width = 23
@@ -69,138 +69,34 @@ def initialize():
     
     
 def initialize_elgeseter():
-    global time, envir, lightAgents, cars, roads, IDIOT_IM
+    global time, envir, lightAgents, cars, roads, total_traffic, IDIOT_IM, IDIOT_IM2
     time = 0
     cars = []
     lightAgents = []
     roads = []
     # Kode som tegner veiene svart
     envir = zeros([height, width])
+    total_traffic = 0
 
-
-    # rngs_lane_1 = Lane(20, 20, 0, 20, "south",envir)
-    # rngs_lane_2 = Lane(40, 40, 0, 20, "south",envir)
-    # rngs = [rngs_lane_1, rngs_lane_2]
-    # road_north_going_south  = Road("south", rngs, [], is_spawner=True)
-    # roads.append(road_north_going_south)
+    # RNGS
     
-    # rmgs_lane_1 = Lane(20, 20, 20, 40, "south",envir)
-    # rmgs_lane_2 = Lane(40, 40, 20, 40, "south",envir)
-    # rmgs = [rmgs_lane_1, rmgs_lane_2]
-    # road_middle_going_south = Road("south", rmgs, [], False)
-    # roads.append(road_middle_going_south)
+    rngs_lane_1 = Lane(7, 7, 0, 10, "south", envir)
+    rngs_lane_2 = Lane(8, 8, 0, 10, "south", envir)
+    rngs = [rngs_lane_1, rngs_lane_2]
+    rngs_probs = [0.7, 0.3]
+    road_north_going_south = Road("south", rngs, rngs_probs, is_spawner=True)
+    roads.append(road_north_going_south)
 
-    # rngs_lane_1.connect_road(road_middle_going_south)
-    # rngs_lane_2.connect_road(road_middle_going_south)
+    traffic_light_rngs_s = Traffic_light(7, 11, group=1)
+    lightAgents.append(traffic_light_rngs_s)
+    rngs_lane_1.add_traffic_light('south', traffic_light_rngs_s)
+    rngs_lane_2.add_traffic_light('south', traffic_light_rngs_s)
 
-    # rsmgs_lane_1 = Lane(20, 20, 40, 60, "south",envir)
-    # rsmgs_lane_2 = Lane(40, 40, 40, 60, "south",envir)
-    # rsmgs = [rsmgs_lane_1, rsmgs_lane_2]
-    # road_south_middle_going_south = Road("south", rsmgs, [], False)
-    # roads.append(road_south_middle_going_south)
+    traffic_light_rngs_e = Traffic_light(8, 11, group=2)
+    lightAgents.append(traffic_light_rngs_e)
+    rngs_lane_2.add_traffic_light('east', traffic_light_rngs_e)
 
-    # rmgs_lane_1.connect_road(road_south_middle_going_south)
-    # rmgs_lane_2.connect_road(road_south_middle_going_south)
-    
-    # rsgs_lane_1 = Lane(20, 20, 60, 100, "south",envir)
-    # rsgs_lane_2 = Lane(40, 40, 60, 100, "south",envir)
-    # rsgs = [rsgs_lane_1, rsgs_lane_2]
-    # road_south_going_south = Road("south", rsgs, [], is_spawner=False, is_despawner=True)
-    # roads.append(road_south_going_south)
-
-    # rsmgs_lane_1.connect_road(road_south_going_south)
-    # rsmgs_lane_2.connect_road(road_south_going_south)
-
-    # traffic_light_rngs_s_1_2 = Traffic_light(30, 20)
-    # traffic_light_rngs_e_2 = Traffic_light(40, 20)
-    # traffic_light_rmgs_s_1_2 = Traffic_light(30, 50)
-    
-    # lightAgents.append(traffic_light_rngs_s_1_2)
-    # lightAgents.append(traffic_light_rngs_e_2)
-    # lightAgents.append(traffic_light_rmgs_s_1_2)
-
-    # rsgn_lane_1 = Lane(60, 60, 100, 80, "north",envir)
-    # rsgn_lane_2 = Lane(80, 80, 100, 80, "north",envir)
-    # rsgn = [rsgn_lane_1, rsgn_lane_2]
-    # road_south_going_north = Road("north", rsgn, [], is_spawner=True)
-    # roads.append(road_south_going_north)
-
-    # traffic_light_rsgn_1_2 = Traffic_light(70, 80)
-    # lightAgents.append(traffic_light_rsgn_1_2)
-
-    # rmgn_lane_1 = Lane(60, 60, 80, 60, "north",envir)
-    # rmgn_lane_2 = Lane(80, 80, 80, 60, "north",envir)
-    # rmgn = [rmgn_lane_1, rmgn_lane_2]
-    # road_middle_going_north = Road("north", rmgn, [])
-    # roads.append(road_middle_going_north)
-    # rsgn_lane_1.connect_road(road_middle_going_north)
-    # rsgn_lane_2.connect_road(road_middle_going_north)
-
-    # rsge_lane = Lane(80, 100, 60, 60, "east",envir)
-    # road_south_going_east = Road("east", [rsge_lane], [], is_despawner=True)
-    # roads.append(road_south_going_east)
-    # rmgn_lane_2.connect_road(road_south_going_east)
-
-    # rmege_lane = Lane(40, 80, 40, 40, "east",envir)
-    # road_middle_east_going_east = Road("east", [rmege_lane])
-    # roads.append(road_middle_east_going_east)
-    # rmgs_lane_2.connect_road(road_middle_east_going_east)
-
-    # rnege_lane = Lane(80, 100, 40, 40, "east",envir)
-    # road_north_east_going_east = Road("east", [rnege_lane], [], is_despawner=True)
-    # roads.append(road_north_east_going_east)
-    # rmege_lane.connect_road(road_north_east_going_east)
-
-    # rsegw_lane = Lane(100, 30, 50, 50, "west",envir)
-    # road_south_east_going_west = Road("west", [rsegw_lane], is_spawner=True)
-    # roads.append(road_south_east_going_west)
-    # traffic_light_rsegw = Traffic_light(80, 50)
-    # lightAgents.append(traffic_light_rsegw)
-    # rsegw_lane.connect_road(road_south_going_south)
-
-    # rmngn_lane_1 = Lane(60, 60, 60, 40, "north",envir)
-    # rmngn_lane_2 = Lane(80, 80, 60, 40, "north",envir)
-    # rmngn = [rmngn_lane_1, rmngn_lane_2]
-    # road_middle_north_going_north = Road("north", rmngn, [])
-    # road.append(road_middle_north_going_north)
-    # rmgn_lane_1.connect_road(road_middle_north_going_north)
-
-    # rmnngn_lane_1 = Lane(70, 70, 40, 30, "north", envir)
-    # road_middle_north_north_going_north = Road("north", [rmnngn_lane_1])
-    # roads.append(road_middle_north_north_going_north)
-    # rmngn_lane_1.connect_road(road_middle_north_north_going_north)
-    # rmngn_lane_2.connect_road(road_middle_north_north_going_north)
-
-    # rnegw_lane = Lane(100, 70, 30, 30, "west", envir)
-    # road_north_east_going_west = Road("west", [rnegw_lane], is_spawner=True)
-
-    # rngn_lane = Lane(70, 70, 30, 0, "north",envir)
-    # road_north_going_north = Road("north", [rngn_lane], is_despawner=True)
-    # roads.append(road_middle_going_north)
-    # rmnngn_lane_1.connect_road(road_north_going_north)
-    # rnegw_lane.connect_road(road_north_going_north)
-
-    # traffic_light_rmngn_1_2 = Traffic_light(70, 30)
-    # lightAgents.append(traffic_light_rmngn_1_2)
-
-
-    # rngs_lane_1 = Lane(7, 7, 0, 10, "south",envir)
-    # rngs_lane_2 = Lane(8, 8, 0, 10, "south",envir)
-    # rngs = [rngs_lane_1, rngs_lane_2]
-    # rngs_probs = [0.5, 0.5]
-    # road_north_going_south  = Road("south", rngs, rngs_probs, is_spawner=True)
-    # roads.append(road_north_going_south)
-
-    # rmgs_lane_1 = Lane(7, 7, 14, 24, "south",envir)
-    # rmgs_lane_2 = Lane(8, 8, 14, 24, "south",envir)
-    # rmgs = [rmgs_lane_1, rmgs_lane_2]
-    # rmgs_probs = [0.5, 0.5]
-    # road_middle_going_south = Road("south", rmgs, rmgs_probs)
-    # roads.append(road_middle_going_south)
-
-    # rngs_lane_1.connect_road(road_middle_going_south)
-    # rngs_lane_2.connect_road(road_middle_going_south)
-
+    # RNGN
 
     rngn_lane = Lane(10, 10, 10, 0, "north", envir)
     rngn = [rngn_lane]
@@ -208,19 +104,122 @@ def initialize_elgeseter():
     road_north_going_north = Road("north", rngn, rngn_probs, is_despawner=True)
     roads.append(road_north_going_north)
 
+    # RMGN
+
+    rmgn_lane_1 = Lane(10, 10, 24, 14, "north", envir)
+    rmgn_lane_2 = Lane(11, 11, 24, 14, "north", envir)
+    rmgn = [rmgn_lane_1 ,rmgn_lane_2]
+    rmgn_probs = [0.5, 0.5]
+    road_middle_going_north = Road("north", rmgn, rmgn_probs)
+    roads.append(road_middle_going_north)
+
+    traffic_light_rmgn_n = Traffic_light(10, 13, group=1)
+    lightAgents.append(traffic_light_rmgn_n)
+    rmgn_lane_1.add_traffic_light('north', traffic_light_rmgn_n)
+    rmgn_lane_2.add_traffic_light('north', traffic_light_rmgn_n)
+
+    # RMGS
+
+    rmgs_lane_2 = Lane(8, 8, 14, 24, "south", envir)
+    rmgs_lane_1 = Lane(7, 7, 14, 24, "south", envir)
+    rmgs = [rmgs_lane_1 ,rmgs_lane_2]
+    rmgs_probs = [0.5, 0.5]
+    road_middle_going_south = Road("south", rmgs, rmgs_probs)
+    roads.append(road_middle_going_south)
+
+    traffic_light_rmgs_s = Traffic_light(7, 25, group=1)
+    lightAgents.append(traffic_light_rmgs_s)
+    rmgs_lane_1.add_traffic_light('south', traffic_light_rmgs_s)
+    rmgs_lane_2.add_traffic_light('south', traffic_light_rmgs_s)
+
+    # RNGW
     rngw_lane = Lane(22, 12, 11, 11, "west", envir)
     rngw = [rngw_lane]
     rngw_probs = [1]
-    road_north_going_west = Road("west", rngw, rngw_probs, is_spawner=True)
+    road_north_going_west = Road("west", rngw, rngw_probs, is_spawner=True, avg_traffic=500)
     roads.append(road_north_going_west)
 
     rngw_lane.connect_road(road_north_going_north)
-    traffic_light_rngw_n = Traffic_light(11, 11)
+    traffic_light_rngw_n = Traffic_light(11, 11, group=2)
     lightAgents.append(traffic_light_rngw_n)
     rngw_lane.add_traffic_light('north', traffic_light_rngw_n)
 
+    # RNGE
+    rnge_lane = Lane(12, 22, 13, 13, "east", envir)
+    rnge = [rnge_lane]
+    rnge_probs = [1]
+    road_north_going_east = Road("east", rnge, rnge_probs, is_despawner=True, avg_traffic=200)
+    roads.append(road_north_going_east)
+
+    # RSGW
+    rsgw_lane = Lane(22, 12, 25, 25, "west", envir)
+    rsgw = [rsgw_lane]
+    rsgw_probs = [1]
+    road_south_going_west = Road("west", rsgw, rsgw_probs, is_spawner=True, avg_traffic=500)
+    roads.append(road_south_going_west)
+
+    traffic_light_rsgw_s = Traffic_light(11, 25, group=2)
+    lightAgents.append(traffic_light_rsgw_s)
+    rsgw_lane.add_traffic_light('south', traffic_light_rsgw_s)
+
+    # RSGE
+    rsge_lane = Lane(12, 22, 27, 27, "east", envir)
+    rsge = [rsge_lane]
+    rsge_probs = [1]
+    road_south_going_east = Road("east", rsge, rsge_probs, is_despawner=True, avg_traffic=500)
+    roads.append(road_south_going_east)
+    
+    # RSGS
+    rsgs_lane_1 = Lane(7, 7, 28, 38, "south", envir)
+    rsgs_lane_2 = Lane(8, 8, 28, 38, "south", envir)
+    rsgs = [rsgs_lane_1, rsgs_lane_2]
+    rsgs_probs = [0.5, 0.5]
+    road_south_going_south = Road("south", rsgs, rsgs_probs, is_despawner=True)
+    roads.append(road_south_going_south)
+
+    # RSGN
+    rsgn_lane_1 = Lane(10, 10, 38, 28, "north", envir)
+    rsgn_lane_2 = Lane(11, 11, 38, 28, "north", envir)
+    rsgn = [rsgn_lane_1, rsgn_lane_2]
+    rsgn_probs = [0.5, 0.5]
+    road_south_going_north = Road("north", rsgn, rsgn_probs, is_spawner=True)
+    roads.append(road_south_going_north)
+    
+    traffic_light_rsgn_n = Traffic_light(10, 27, group=1)
+    lightAgents.append(traffic_light_rsgn_n)
+    rsgn_lane_1.add_traffic_light('north', traffic_light_rsgn_n)
+    rsgn_lane_2.add_traffic_light('north', traffic_light_rsgn_n)
+    rsgn_lane_2.add_traffic_light('east', traffic_light_rsgn_n)
+
+    # Connecting lanes to roads
+    rngs_lane_1.connect_road(road_middle_going_south)
+    rngs_lane_2.connect_road(road_middle_going_south)
+    rngs_lane_2.connect_road(road_north_going_east)
+    
+    rngw_lane.connect_road(road_north_going_north)
+    
+    rsgn_lane_1.connect_road(road_middle_going_north)
+    rsgn_lane_2.connect_road(road_middle_going_north)
+    rsgn_lane_2.connect_road(road_south_going_east)
+    
+    rsgw_lane.connect_road(road_south_going_south)
+
+    rmgs_lane_1.connect_road(road_south_going_south)
+    rmgs_lane_2.connect_road(road_south_going_south)
+
+    rmgn_lane_1.connect_road(road_north_going_north)
+    rmgn_lane_2.connect_road(road_north_going_north)
+
     IDIOT_IM = IM()
     IDIOT_IM.add_trafic_light(traffic_light_rngw_n)
+    IDIOT_IM.add_trafic_light(traffic_light_rngs_s)
+    IDIOT_IM.add_trafic_light(traffic_light_rngs_e)
+    IDIOT_IM.add_trafic_light(traffic_light_rmgn_n)
+
+    IDIOT_IM2 = IM()
+    IDIOT_IM2.add_trafic_light(traffic_light_rmgs_s)
+    IDIOT_IM2.add_trafic_light(traffic_light_rsgw_s)
+    IDIOT_IM2.add_trafic_light(traffic_light_rsgn_n)
 
 
 def observe():
@@ -236,7 +235,7 @@ def observe():
     scatter(xl, yl, c = sl, cmap = cm.RdYlGn) # tegner noe lyskryssdrit
     scatter(x1, y1, c = s1, cmap = cm.cool) # tegner noe bildrit
     
-    title('t = ' + str(time)) # D'Tittel da
+    title('Elgseter simulation using identical signals\nt = ' + str(time)+ ' avg traffic = ' + str(int(total_traffic/(time+1)))) # D'Tittel da
 
 
 def check_if_red_light(car):
@@ -246,11 +245,6 @@ def check_if_red_light(car):
         if np.sqrt(xL_dist**2 + yL_dist**2) -1 == 0 and light.current_state == "red":
             return True
     return False
-    #if ((car.y == lightAgents[0].y-1 and lightAgents[0].current_state == "red") 
-    #    or (car.y == lightAgents[1].y-1 and lightAgents[1].current_state == "red")):
-    #        return True
-    #else:
-    #    return False
 
 def get_distance_between_cars(car_1, car_2):
     y_distance = abs(car_1.y - car_2.y)
@@ -259,7 +253,7 @@ def get_distance_between_cars(car_1, car_2):
     return distance
 
 def update():
-    global time, cars, roads, envir
+    global time, cars, roads, envir, total_traffic
 
     # Gitt av vi har en list over alle veiene
     for road in roads:
@@ -268,15 +262,16 @@ def update():
             cars.remove(popped_car)
         new_car = road.spawn_car_cond()
         if new_car != False: # Hvis bil faktisk ble spawnet
-            print('Car spawned')
             cars.append(new_car)
     
     for car in cars:
         car.update()
 
     IDIOT_IM.update(time)
+    IDIOT_IM2.update(time)
 
     time += 1
+    total_traffic += len(cars)
     
 
 pycxsimulator.GUI().start(func=[initialize_elgeseter, observe, update])
